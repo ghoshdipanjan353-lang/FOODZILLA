@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodzilla</title>
+
+
+<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            position: relative;
+        }
+        
+        .nav-links a {
+            color: black;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .logout-badge {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            min-width: 350px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1001;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .dropdown-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dropdown-header h3 {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .dropdown-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-bottom: 15px;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .footer-link {
+            color: #ff6b6b;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Custom confirmation modal styles */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal-content h3 {
+            font-family: 'Poppins', Arial, sans-serif;
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .modal-content p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .modal-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        .confirm-btn {
+            background: linear-gradient(#ffe259, #ffa751);
+            color: white;
+        }
+        
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+        }
+        
+        .cancel-btn {
+            background: #f1f2f6;
+            color: #333;
+        }
+        
+        .cancel-btn:hover {
+            background: #ddd;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem; }
+            .menu-toggle { display: block; }
+            .dropdown-content {
+                min-width: 300px;
+                right: -50px;
+            }
+        }
+
+        /* Main content styling */
+        .main-content {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .welcome-text {
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">🍔 FOODZILLA </div>
+        <div class="menu-toggle" id="menu-toggle">☰</div>
+        <ul class="nav-links" id="nav-links">
+            <li class="profile-dropdown">
+                <a href="#" onclick="toggleProfileDropdown(event)">MY PROFILE</a>
+                <div class="dropdown-content" id="profileDropdown">
+                    <div class="dropdown-header">
+                        <h3>Welcome to FOODZILLA</h3>
+                        <p>Sign in to access your account</p>
+                    </div>
+                    
+                    <div class="login-form">
+                        <form onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" placeholder="Enter your username" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" placeholder="Enter your email" required>
+                            </div>
+                            
+                            <button type="submit" class="login-btn">Sign In</button>
+                        </form>
+                        
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <span style="color: #666; font-size: 14px;">Don't have an account? </span>
+                            <a href="#" class="footer-link" onclick="showSignUp()">Sign Up</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#FAQ">FAQ</a></li>
+            <li><a href="#" id="logout-btn" onclick="handleLogout(event)">LOGOUT</a></li>
+        </ul>
+    </nav>
+
+    
+
+    <!-- Confirmation Modal -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout from FOODZILLA?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm-btn" onclick="confirmLogout()">Yes, Logout</button>
+                <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Fonts Web Font Loader - Official Google JavaScript -->
+    <script>
+        // Official Google Web Font Loader
+        WebFontConfig = {
+            google: { 
+                families: ['Roboto:300,400,500,600,700', 'Poppins:400,500,600,700'] 
+            }
+        };
+
+        (function() {
+            var wf = document.createElement('script');
+            wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+            wf.type = 'text/javascript';
+            wf.async = 'true';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(wf, s);
+        })();
+
+        function toggleProfileDropdown(event) {
+            event.preventDefault();
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('show');
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.profile-dropdown')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            
+            alert(`Welcome back to FOODZILLA, ${username}! 🍔\nLogged in with: ${email}`);
+            
+            // Close dropdown after login
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+
+        function showSignUp() {
+            alert('Sign Up feature coming soon! 🚀\nStay tuned for more FOODZILLA updates!');
+        }
+
+        function handleLogout(event) {
+            event.preventDefault();
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        function confirmLogout() {
+            alert('Successfully logged out from FOODZILLA! 👋\nSee you soon!');
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        // Close dropdown when pressing Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977ac25381f0a75f',t:'MTc1NjYyNDc2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+
+        /* Carousel Container - Full Width */
+        .carousel-container {
+            position: relative;
+            width: 100vw;
+            max-width: 100%;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Carousel Wrapper */
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+        }
+
+        /* Carousel Track */
+        .carousel-track {
+            display: flex;
+            width: 500%;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+
+        /* Carousel Slides */
+        .carousel-slide {
+            flex: 0 0 20%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Image Placeholder */
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: #f8f9fa;
+            border: 3px dashed #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.4rem;
+        }
+
+        .image-placeholder .material-icons {
+            font-size: 80px;
+            margin-bottom: 24px;
+            color: #FF8C00;
+        }
+
+        .image-placeholder h3 {
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .image-placeholder p {
+            font-size: 1.1rem;
+            color: #999;
+            text-align: center;
+            max-width: 300px;
+        }
+
+        /* Navigation Buttons */
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(0,0,0,0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .carousel-nav.prev {
+            left: 30px;
+        }
+
+        .carousel-nav.next {
+            right: 30px;
+        }
+
+        .carousel-nav .material-icons {
+            font-size: 28px;
+        }
+
+        /* Carousel Indicators */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        .carousel-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicator.active {
+            background: #FF8C00;
+            transform: scale(1.3);
+        }
+
+        .carousel-indicator:hover {
+            background: rgba(255,140,0,0.8);
+        }
+
+        /* Large Screen Enhancement */
+        @media (min-width: 1200px) {
+            .carousel-wrapper {
+                height: 400px;
+            }
+
+            .image-placeholder .material-icons {
+                font-size: 80px;
+            }
+
+            .image-placeholder h3 {
+                font-size: 1.8rem;
+            }
+
+            .image-placeholder p {
+                font-size: 1.1rem;
+            }
+
+            .carousel-nav {
+                width: 60px;
+                height: 60px;
+            }
+
+            .carousel-nav .material-icons {
+                font-size: 28px;
+            }
+        }
+
+        /* Tablet Responsive */
+        @media (max-width: 768px) {
+            .carousel-wrapper {
+                height: 280px;
+            }
+
+            .carousel-nav {
+                width: 50px;
+                height: 50px;
+            }
+
+            .carousel-nav.prev {
+                left: 20px;
+            }
+
+            .carousel-nav.next {
+                right: 20px;
+            }
+
+            .carousel-nav .material-icons {
+                font-size: 24px;
+            }
+
+            .image-placeholder {
+                font-size: 1.2rem;
+            }
+
+            .image-placeholder .material-icons {
+                font-size: 60px;
+            }
+
+            .image-placeholder h3 {
+                font-size: 1.5rem;
+            }
+
+            .image-placeholder p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .carousel-wrapper {
+                height: 220px;
+            }
+
+            .carousel-nav {
+                width: 40px;
+                height: 40px;
+            }
+
+            .carousel-nav.prev {
+                left: 15px;
+            }
+
+            .carousel-nav.next {
+                right: 15px;
+            }
+
+            .carousel-nav .material-icons {
+                font-size: 20px;
+            }
+
+            .image-placeholder .material-icons {
+                font-size: 50px;
+                margin-bottom: 16px;
+            }
+
+            .image-placeholder h3 {
+                font-size: 1.3rem;
+                margin-bottom: 8px;
+            }
+
+            .image-placeholder p {
+                font-size: 0.9rem;
+            }
+
+            .carousel-indicators {
+                bottom: 20px;
+                gap: 8px;
+            }
+
+            .carousel-indicator {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+    </style>
+
+    <!-- Full Width Image Carousel -->
+    <div class="carousel-container">
+        <div class="carousel-wrapper">
+            <!-- Carousel Track -->
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Slide 1 -->
+                <div class="carousel-slide">
+                    <div class="image-placeholder">
+                        <span class="material-icons"></span>
+                        <img src="banner1.png" height="422" width="1475" class="src">
+                    </div>
+                </div>
+                
+                <!-- Slide 2 -->
+                <div class="carousel-slide">
+                    <div class="image-placeholder">
+                        <span class="material-icons"></span> 
+                        <img src="banner2.png" height="422" width="1475"class="src">
+                    </div>
+                </div>
+                
+                <!-- Slide 3 -->
+                <div class="carousel-slide">
+                    <div class="image-placeholder">
+                        <span class="material-icons"></span>
+                        <img src="banner3.png" height="422" width="1475"class="src">
+                    </div>
+                </div>
+                
+                <!-- Slide 4 -->
+                <div class="carousel-slide">
+                    <div class="image-placeholder">
+                        <span class="material-icons"></span>
+                        <img src="banner4.png" height="422" width="1475" class="src">
+                    </div>
+                </div>
+                
+                <!-- Slide 5 -->
+                <div class="carousel-slide">
+                    <div class="image-placeholder">
+                        <span class="material-icons"></span>
+                        <img src="banner5.png" height="422" width="1475" class="src">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <button class="carousel-nav prev" id="prevBtn">
+                <span class="material-icons"> < </span>
+            </button>
+            <button class="carousel-nav next" id="nextBtn">
+                <span class="material-icons"> > </span>
+            </button>
+            
+            <!-- Indicators --> 
+            <div class="carousel-indicators" id="carouselIndicators">
+                <span class="carousel-indicator active" data-slide="0"></span>
+                <span class="carousel-indicator" data-slide="1"></span>
+                <span class="carousel-indicator" data-slide="2"></span>
+                <span class="carousel-indicator" data-slide="3"></span>
+                <span class="carousel-indicator" data-slide="4"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class Carousel {
+            constructor(container) {
+                this.container = container;
+                this.track = container.querySelector('#carouselTrack');
+                this.slides = container.querySelectorAll('.carousel-slide');
+                this.indicators = container.querySelectorAll('.carousel-indicator');
+                this.prevBtn = container.querySelector('#prevBtn');
+                this.nextBtn = container.querySelector('#nextBtn');
+                
+                this.currentSlide = 0;
+                this.totalSlides = this.slides.length;
+                this.isPlaying = true;
+                this.autoPlayInterval = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                this.startAutoPlay();
+                this.updateCarousel();
+            }
+            
+            bindEvents() {
+                // Navigation buttons
+                this.prevBtn.addEventListener('click', () => this.prevSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+                
+                // Indicators
+                this.indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => this.goToSlide(index));
+                });
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.prevSlide();
+                    if (e.key === 'ArrowRight') this.nextSlide();
+                });
+                
+                // Touch/Swipe support
+                let startX = 0;
+                let endX = 0;
+                
+                this.track.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+                
+                this.track.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    this.handleSwipe(startX, endX);
+                });
+                
+                // Mouse drag support
+                let isDragging = false;
+                let startMouseX = 0;
+                let endMouseX = 0;
+                
+                this.track.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startMouseX = e.clientX;
+                    this.track.style.cursor = 'grabbing';
+                });
+                
+                this.track.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                });
+                
+                this.track.addEventListener('mouseup', (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    endMouseX = e.clientX;
+                    this.track.style.cursor = 'grab';
+                    this.handleSwipe(startMouseX, endMouseX);
+                });
+                
+                this.track.addEventListener('mouseleave', () => {
+                    isDragging = false;
+                    this.track.style.cursor = 'grab';
+                });
+            }
+            
+            handleSwipe(startX, endX) {
+                const threshold = 50;
+                const diff = startX - endX;
+                
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0) {
+                        this.nextSlide();
+                    } else {
+                        this.prevSlide();
+                    }
+                }
+            }
+            
+            updateCarousel() {
+                // Update track position
+                const translateX = -this.currentSlide * (100 / this.totalSlides);
+                this.track.style.transform = `translateX(${translateX}%)`;
+                
+                // Update indicators
+                this.indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === this.currentSlide);
+                });
+            }
+            
+            nextSlide() {
+                this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                this.updateCarousel();
+            }
+            
+            prevSlide() {
+                this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                this.updateCarousel();
+            }
+            
+            goToSlide(index) {
+                this.currentSlide = index;
+                this.updateCarousel();
+            }
+            
+            startAutoPlay() {
+                if (this.autoPlayInterval) return;
+                
+                this.autoPlayInterval = setInterval(() => {
+                    this.nextSlide();
+                }, 4000);
+                
+                this.isPlaying = true;
+            }
+        }
+        
+        // Initialize carousel when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const carouselContainer = document.querySelector('.carousel-container');
+            new Carousel(carouselContainer);
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97778eb0354f7a12',t:'MTc1NjU5MTE4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+             
+
+
+
+
+ <style>
+
+    *.menu-container{
+        width: 100%;
+    
+    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(#FF6347, #FF8C00);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .menu-container {
+            max-width: 1200px;
+             margin: 35px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: rgb(22, 1, 1);
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .menu-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            padding: 0;
+        }
+
+        .menu-section {
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .menu-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 25px 30px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .section-header:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .section-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-image {
+            width: 80px;
+            height: 80px;
+            background: #f1f3f4;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .section-image .material-icons {
+            font-size: 32px;
+            color: #666;
+        }
+
+        .section-details h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .section-details p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .expand-icon {
+            font-size: 24px;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-section.active .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: #f8f9fa;
+        }
+
+        .section-content.active {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar styling */
+        .section-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .section-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .section-content::-webkit-scrollbar-thumb {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .section-content::-webkit-scrollbar-thumb:hover {
+            background: #f1f1f1;;
+        }
+
+        .subsection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .subsection {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .subsection:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .subsection-image {
+            width: 100%;
+            height: 120px;
+            background: #f1f3f4;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .subsection-image .material-icons {
+            font-size: 40px;
+            color: #666;
+        }
+
+        .subsection h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .subsection p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .item-list {
+            margin-top: 15px;
+        }
+
+
+
+        .items-display {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .items-display li {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #333;
+            border-left: 4px solid #42ea50;
+            transition: all 0.3s ease;
+        }
+
+        .items-display li:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        /* Color coding for different sections */
+        .pizza-section .section-header:hover {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+        }
+
+        .burger-section .section-header:hover {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
+
+        .sandwich-section .section-header:hover {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        }
+
+        .others-section .section-header:hover {
+            background: #cc9fc5;
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-header h1 {
+                font-size: 2rem;
+            }
+            .section-header {
+                padding: 20px;
+            }
+
+            .section-info {
+                gap: 20px;
+            }
+
+            .section-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .section-image .material-icons {
+                font-size: 24px;
+            }
+
+            .section-details h3 {
+                font-size: 1.3rem;
+            }
+
+            .subsection-grid {
+                grid-template-columns: 5fr;
+                padding: 20px;
+                gap: 15px;
+            }
+
+            .subsection {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .menu-header {
+                padding: 20px 15px;
+            }
+
+            .menu-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-header {
+                padding: 15px;
+            }
+
+            .section-details h3 {
+                font-size: 1.2rem;
+            }
+
+            .subsection-grid {
+                padding: 15px;
+            }
+        }
+    </style>
+
+
+
+
+<!-- menu section -->
+    <div class="menu-container">
+        <!-- Menu Header -->
+        <div class="menu-header">
+            <h1><B><U>MENU</U></B></h1>
+        </div>
+        <!-- Menu Grid -->
+        <div class="menu-grid">
+            <!-- Pizza Section -->
+            <div class="menu-section pizza-section" data-section="pizza">
+                <button class="section-header">
+                    <div class="section-info">
+                        <div class="section-image">
+                            <span class="material-icons"></span>
+                            <img src="pizza.png" height="70" width="80" class="src">
+                        </div>
+                        <div class="section-details">
+                            <h3>Pizza</h3>
+                            <p>Authentic Italian pizzas with fresh ingredients</p>
+                        </div>
+                    </div>
+                    <span class="material-icons expand-icon"></span>
+
+                </button>
+                <div class="section-content">
+                    <div class="subsection-grid">
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="pizza.png" height="90" width="100" class="src">
+                            </div>
+                            <h4>Veg Pizza</h4>
+                            <p>Delicious vegetarian pizzas with fresh vegetables, cheese, and aromatic herbs</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Veggie Paradise</li>
+                                    <li>Veg Extravaganza</li>
+                                    <li>Paneer Makhani Pizza</li>
+                                    <li>Margherita Pizza</li>
+                                    <li>Onion Pizza</li>
+                                    <li>Cheese and Corn Pizza</li>
+                                    <li>Mushroom Delight</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="pizza.png" height="90" width="100" class="src">
+                            </div>
+                            <h4>Non-Veg Pizza</h4>
+                            <p>Savory non-vegetarian pizzas with premium meats, chicken, and exotic toppings</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Chicken Feast Pizza</li>
+                                    <li>Mutton Kosha Pizza</li>
+                                    <li>Chicken Delight Pizza</li>
+                                    <li>Chicken Tandoori Pizza</li>
+                                    <li>Chicken Shawarma Pizza</li>
+                                    <li>Chicken Fiery Feast</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Burger Section -->
+            <div class="menu-section burger-section" data-section="burger">
+                <button class="section-header">
+                    <div class="section-info">
+                        <div class="section-image">
+                            <span class="material-icons"></span>
+                            <img src="hamburger.png" height="70" width="80" class="src">
+                        </div>
+                        <div class="section-details">
+                            <h3>Burgers</h3>
+                            <p>Juicy burgers with fresh buns and premium fillings</p>
+                        </div>
+                    </div>
+                    <span class="material-icons expand-icon"></span>
+                </button>
+                <div class="section-content">
+                    <div class="subsection-grid">
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="hamburger.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Veg Burgers</h4>
+                            <p>Healthy vegetarian burgers with plant-based patties, fresh veggies, and special sauces</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Aloo Tikki Burger</li>
+                                    <li>Veg Makhani Burger</li>
+                                    <li>Korean Paneer Burger</li>
+                                    <li>Paneer Makhani Burger</li>
+                                    <li>Cheese Loaded Burger</li>
+                                    <li>Corn Delight Burger</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="hamburger.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Non-Veg Burgers</h4>
+                            <p>Hearty non-vegetarian burgers with juicy meat patties, bacon, and gourmet toppings</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Chicken Crispy Burger</li>
+                                    <li>Chicken Makhani Burger</li>
+                                    <li>Chicken Whopper</li>
+                                    <li>Chicken Cheese Burger</li>
+                                    <li>Chicken Overloaded Burger</li>
+                                    <li>American Chicken Burger</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sandwiches Section -->
+            <div class="menu-section sandwich-section" data-section="sandwich">
+                <button class="section-header">
+                    <div class="section-info">
+                        <div class="section-image">
+                            <span class="material-icons"></span>
+                            <img src="sandwich.png" height="70" width="80" class="src">
+                        </div>
+                        <div class="section-details">
+                            <h3>Sandwiches</h3>
+                            <p>Fresh sandwiches made with artisan bread and quality ingredients</p>
+                        </div>
+                    </div>
+                    <span class="material-icons expand-icon"></span>
+                </button>
+                <div class="section-content">
+                    <div class="subsection-grid">
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="sandwich.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Veg Sandwiches</h4>
+                            <p>Fresh vegetarian sandwiches with crisp vegetables, cheese, and homemade spreads</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Veg Green Sandwich</li>
+                                    <li>Paneer Loaded Sandwich</li>
+                                    <li>Mushroom Delight Sandwich</li>
+                                    <li>Corn and Cheese Sandwich</li>
+                                    <li>Grilled Cheese Sandwich</li>
+                                    <li>Spicy Veg Delight</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="sandwich.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Non-Veg Sandwiches</h4>
+                            <p>Protein-rich non-vegetarian sandwiches with premium meats and flavorful seasonings</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Plain Chicken Sandwich</li>
+                                    <li>Cheese Chicken Sandwich</li>
+                                    <li>Chicken Club Sandwich</li>
+                                    <li>Chicken and Corn Sandwich</li>
+                                    <li>Chicken Fiery Sandwich</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Delicacies Section -->
+            <div class="menu-section others-section" data-section="others">
+                <button class="section-header">
+                    <div class="section-info">
+                        <div class="section-image">
+                            <span class="material-icons"></span>
+                            <img src="desert.png" height="80" width="80" class="src">
+                        </div>
+                        <div class="section-details">
+                            <h3>Other Delicacies</h3>
+                            <p>Special treats and desserts to complete your meal</p>
+                        </div>
+                    </div>
+                    <span class="material-icons expand-icon"></span>
+                </button>
+                <div class="section-content">
+                    <div class="subsection-grid">
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="desert.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Desserts</h4>
+                            <p>Sweet endings with our collection of cakes, pastries </p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Mango Cheese Cake</li>
+                                    <li>Choco Mousse</li>
+                                    <li>Red Velvet Pastry</li>
+                                    <li>Choco Rum Ball</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="subsection">
+                            <div class="subsection-image">
+                                <span class="material-icons"></span>
+                                <img src="chicken.png" height="100" width="100" class="src">
+                            </div>
+                            <h4>Special Items</h4>
+                            <p>Chef's special creations, seasonal dishes, and unique fusion items you won't find elsewhere</p>
+                            <div class="item-list">
+                                <ul class="items-display">
+                                    <li>Chicken Loaded Fries</li>
+                                    <li>Chicken Omelette</li>
+                                    <li>Chicken Dumplings</li>
+                                    <li>Chicken Wings</li>
+                                    <li>Chicken Popcorn</li>
+                                    <li>Chicken Strips</li>
+                                    <li>Fried Dumplings</li>
+                                    <li>Chicken Nuggets</li>
+                                    <li>Veggie Cutlet</li>
+                                    <li>Paneer Loaded Cheese Fries</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu functionality using vanilla JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.menu-section');
+            
+            sections.forEach(function(section) {
+                const header = section.querySelector('.section-header');
+                const content = section.querySelector('.section-content');
+                
+                header.addEventListener('click', function() {
+                    const isActive = section.classList.contains('active');
+                    
+                    // Close all other sections
+                    sections.forEach(function(otherSection) {
+                        if (otherSection !== section) {
+                            otherSection.classList.remove('active');
+                            otherSection.querySelector('.section-content').classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current section
+                    if (isActive) {
+                        section.classList.remove('active');
+                        content.classList.remove('active');
+                    } else {
+                        section.classList.add('active');
+                        content.classList.add('active');
+                        
+                        // Smooth scroll to section
+                        setTimeout(function() {
+                            content.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'nearest'
+                            });
+                        }, 200);
+                    }
+                });
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977856ec52157a12',t:'MTc1NjU5OTM5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+            
+
+
+
+
+
+
+
+
+
+
+
+<!-- FAQ Section -->
+  <style>
+        /* FAQ Section Styles */
+        .faq-section {
+            background-color:#ffe259, #ffa751;
+            color: yellow;
+            padding: 40px 20px;
+            margin-top: auto;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .faq-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: black;
+        }
+        
+        .faq-item {
+            background:linear gradient(#ffe259, #ffa751);
+            border: 1px solid black;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            background-color: #2a2a2a;
+            border-color: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+        
+        .faq-question {
+            background: none;
+            border: none;
+            color: black;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 20px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            color: #f0f0f0;
+        }
+        
+        .faq-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: black;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            padding: 20px;
+        }
+        
+        .faq-answer p {
+            margin: 0;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        /* Ensure the FAQ section stays at bottom */
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .content-spacer {
+            flex: 1;
+            background-color: #f5f5f5;
+            padding: 40px 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+   
+
+    <!-- FAQ Section -->
+<section id="FAQ" class="faq-section">
+    <div class="faq-section">
+        <div class="faq-container">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    why should you choose Foodzilla ?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>We offer delicious food in the most hygienic and affordable prices.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do you offer refunds ?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>yes we offer refunds and it will be processed with in 24 hrs.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do you offer customer support?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! Our customer support team is available Monday through Saturday, 24 x 7. You can reach us via email, phone .</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I track my order?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Absolutely! once delivery partner receive your order you will get a tracking link at your email and phone number.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <button class="faq-question">
+                    What payment methods do you accept?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>We accept all major credit card, Upi, and Google Pay for your convenience and security.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FAQ Toggle Functionality
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all other FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Toggle current item
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'967f43c24360443c',t:'MTc1Mzk4NzY1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+
+
+
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 0;
+            flex: 1;
+        }
+        
+        .main-content-inner {
+            text-align: center;
+        }
+        
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .main-subtitle {
+            color: #6b7280;
+        }
+        
+        .footer {
+            background-color: #000000;
+            color: white;
+            padding: 64px 0;
+        }
+        
+        .footer-container {
+            max-width: 1152px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .footer-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .footer-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .footer-subtitle {
+            color: #9ca3af;
+            font-size: 1.125rem;
+        }
+        
+        .social-section {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .social-link {
+            padding: 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .social-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        .social-link.instagram {
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+        }
+        
+        .social-link.instagram:hover {
+            background: linear-gradient(45deg, #7c3aed, #db2777);
+        }
+        
+        .social-link.facebook {
+            background-color: #2563eb;
+        }
+        
+        .social-link.facebook:hover {
+            background-color: #1d4ed8;
+        }
+        
+        .social-link.whatsapp {
+            background-color: #10b981;
+        }
+        
+        .social-link.whatsapp:hover {
+            background-color: #059669;
+        }
+        
+        .social-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .contact-section {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .contact-icon-wrapper {
+            background-color: #374151;
+            padding: 8px;
+            border-radius: 8px;
+            margin-right: 16px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .contact-item:hover .contact-icon-wrapper {
+            background-color: #4b5563;
+        }
+        
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        
+        .contact-icon.email {
+            color: #60a5fa;
+        }
+        
+        .contact-icon.phone {
+            color: #34d399;
+        }
+        
+        .contact-icon.address {
+            color: #f87171;
+        }
+        
+        .contact-text {
+            color: #d1d5db;
+            transition: color 0.2s ease;
+        }
+        
+        .contact-item:hover .contact-text {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 32px;
+        }
+        
+        .footer-bottom-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .copyright {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .footer-link {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-bottom-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .footer-title {
+                font-size: 1.5rem;
+            }
+            
+            .social-links {
+                flex-wrap: wrap;
+            }
+            
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .contact-icon-wrapper {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contact Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Contact US Header -->
+            <div class="footer-header">
+                <h2 class="footer-title">CONTACT US</h2>
+                <p class="footer-subtitle">GET IN TOUCH, WE ARE AVAILABLE 24 X 7</p>
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="social-section">
+                <h3 class="section-title">Follow Us</h3>
+                <div class="social-links">
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/knight_x100?igsh=M2M5bTk2ejNyY3l1" 
+                       target="_blank"
+                       class="social-link instagram">
+                        <svg class="social-icon" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="https://www.facebook.com/share/14Heetaj4i6/" class="social-link facebook">
+                        <svg class="social-icon" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/918240952113" target="_blank" class="social-link whatsapp">
+                        <svg class="social-icon" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contact Information Section -->
+            <div class="contact-section">
+                <h3 class="section-title">Contact Information</h3>
+                
+                <!-- Email -->
+                <div class="contact-item">
+                    <div class="contact-icon-wrapper">
+                        <svg class="contact-icon email" viewBox="0 0 20 20">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                        </svg>
+                    </div>
+                    <span class="contact-text">ghoshdipanjan353@gmail.com</span>
+                </div>
+
+                <!-- Phone -->
+                <div class="contact-item">
+                    <div class="contact-icon-wrapper">
+                        <svg class="contact-icon phone" viewBox="0 0 20 20">
+                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                        </svg>
+                    </div>
+                    <span class="contact-text">+91 8240952113</span>
+                </div>
+
+                <!-- Address -->
+                <div class="contact-item">
+                    <div class="contact-icon-wrapper">
+                        <svg class="contact-icon address" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <span class="contact-text">131, BHAGIR BAGAN LANE KOL- 28</span>
+                </div>
+            </div>
+
+            <!-- Bottom Border -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="copyright">
+                        © 2024 FOODZILLA . All rights reserved.
+                    </p>
+                    <div class="footer-links">
+                        <a href="#" class="footer-link">Terms of Service</a>
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add click analytics for social media links
+        document.querySelectorAll('.social-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const platform = this.classList.contains('instagram') ? 'Instagram' : 
+                               this.classList.contains('facebook') ? 'Facebook' : 'WhatsApp';
+                console.log(`Social media click: ${platform}`);
+            });
+        });
+
+        // Add hover effects for contact items
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Responsive navigation helper
+        function handleResize() {
+            const isMobile = window.innerWidth < 640;
+            const socialLinks = document.querySelector('.social-links');
+            
+            if (isMobile) {
+                socialLinks.style.flexWrap = 'wrap';
+            } else {
+                socialLinks.style.flexWrap = 'nowrap';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call on initial load
+    </script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97560064844c7a0a',t:'MTc1NjIzOTMzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+
+
+
+
+
+</body>
+</html>
